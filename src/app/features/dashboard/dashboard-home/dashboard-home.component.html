@@ -1,0 +1,66 @@
+<div class="container py-4">
+  <h2 class="mb-2">
+    Bienvenido al Panel del Laboratorio, {{ usuario?.nombre }}
+  </h2>
+
+  <!-- Mensaje según el rol del usuario -->
+  <p class="text-muted mb-4" *ngIf="usuario?.rol === 'ADMIN'">
+    Estás visualizando el resumen general del sistema: laboratorios,
+    pacientes activos y resultados emitidos.
+  </p>
+
+  <p class="text-muted mb-4" *ngIf="usuario?.rol === 'PACIENTE'">
+    Aquí podras ver tus exámenes
+    y el estado de los resultados emitidos por los laboratorios.
+  </p>
+
+  <p class="text-muted mb-4" *ngIf="usuario?.rol === 'USER'">
+    Este panel muestra información general de los laboratorios y resultados
+    gestionados en la plataforma.
+  </p>
+
+  <!-- Tarjetas resumen -->
+  <div class="row g-3 mb-4" *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'USER'">
+    <div class="col-md-4">
+      <div class="card border-primary shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Laboratorios</h5>
+          <p class="display-6">{{ totalLabs }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-info shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Pacientes activos</h5>
+          <p class="display-6">{{ totalPacientes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-success shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Resultados emitidos</h5>
+          <p class="display-6">{{ totalResultados }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de resultados -->
+  <h4 class="mt-4 mb-3" *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'USER'">Estado de resultados</h4>
+
+  <ul class="list-group" *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'USER'">
+    <li class="list-group-item d-flex justify-content-between">
+      Pendientes <span class="badge bg-warning">{{ pendientes }}</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+      Procesados <span class="badge bg-info">{{ procesados }}</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+      Entregados <span class="badge bg-success">{{ entregados }}</span>
+    </li>
+  </ul>
+</div>

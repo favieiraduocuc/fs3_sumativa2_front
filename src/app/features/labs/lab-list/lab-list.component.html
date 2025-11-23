@@ -1,0 +1,28 @@
+<div class="container py-4">
+  <h3 class="mb-3">Laboratorios registrados</h3>
+
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+        <tbody>
+          <tr *ngFor="let lab of (laboratorios$ | async) ?? []">
+            <td>{{ lab.nombre }}</td>
+            <td>{{ lab.direccion }}</td>
+            <td>{{ lab.telefono }}</td>
+            <td>
+              <span class="badge" [ngClass]="lab.activo ? 'bg-success' : 'bg-secondary'">
+                {{ lab.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</div>

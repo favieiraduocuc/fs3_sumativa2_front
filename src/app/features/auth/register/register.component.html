@@ -1,0 +1,67 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="row w-100">
+    <div class="col-12 col-md-8 col-lg-5 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="h4 text-center mb-4">Crear Cuenta</h1>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+            <!-- NOMBRE -->
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" formControlName="nombre">
+              <div class="text-danger small" *ngIf="registerForm.get('nombre')?.touched && registerForm.get('nombre')?.invalid">
+                Debes ingresar tu nombre (mínimo 3 letras).
+              </div>
+            </div>
+
+            <!-- CORREO -->
+            <div class="mb-3">
+              <label class="form-label">Correo electrónico</label>
+              <input type="email" class="form-control" formControlName="correo">
+              <div class="text-danger small" *ngIf="registerForm.get('correo')?.touched && registerForm.get('correo')?.invalid">
+                Debes ingresar un correo válido.
+              </div>
+            </div>
+
+            <!-- CONTRASEÑA -->
+            <div class="mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" class="form-control" formControlName="password">
+              <div class="text-danger small" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['passwordRules']">
+                La contraseña debe tener:
+                ● mínimo 8 caracteres ● un número ● una mayúscula ● un carácter especial
+              </div>
+            </div>
+
+            <!-- REPETIR CONTRASEÑA -->
+            <div class="mb-3">
+              <label class="form-label">Repetir contraseña</label>
+              <input type="password" class="form-control" formControlName="repetirPassword">
+              <div class="text-danger small" *ngIf="registerForm?.errors?.['mismatch'] && registerForm.get('repetirPassword')?.touched">
+                Las contraseñas no coinciden.
+              </div>
+            </div>
+
+            <!-- ROL -->
+            <div class="mb-3">
+              <label class="form-label">Rol</label>
+                <select class="form-select" formControlName="rol">
+                  <option value="">Seleccionar...</option>
+                  <option value="PACIENTE">Paciente</option>
+                  <option value="USER">Usuario Sucursal</option>
+                </select>
+              <div class="text-danger small" *ngIf="registerForm.get('rol')?.touched && registerForm.get('rol')?.invalid">
+                Debes seleccionar un rol.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Crear cuenta</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

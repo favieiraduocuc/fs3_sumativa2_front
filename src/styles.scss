@@ -1,1 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+body {
+  background-image: url('assets/img/backgrounds/fondo.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; // se mantiene fija al hacer scroll
+  background-repeat: no-repeat;
+}

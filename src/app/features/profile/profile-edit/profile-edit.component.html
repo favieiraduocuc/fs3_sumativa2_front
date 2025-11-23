@@ -1,0 +1,181 @@
+<div class="container py-4">
+  <div class="row mb-3">
+    <div class="col-12">
+      <h3 class="mb-1">Mi perfil</h3>
+      <p class="text-muted mb-0">
+        Administra tus datos personales y la seguridad de tu cuenta.
+      </p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna izquierda: resumen -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm mb-3">
+        <div class="card-body text-center">
+          <div class="avatar mb-3">
+            <span>{{ perfilForm.get('nombre')?.value?.charAt(0) || 'U' }}</span>
+          </div>
+          <h5 class="mb-0">{{ perfilForm.get('nombre')?.value }}</h5>
+          <p class="text-muted mb-2 small">
+            {{
+              usuario?.rol === 'ADMIN'
+                ? 'Administrador del Sistema'
+                : usuario?.rol === 'PACIENTE'
+                  ? 'Paciente'
+                  : 'Usuario Estándar'
+            }}
+          </p>
+          <p class="mb-0 small text-muted">
+            {{ perfilForm.get('correo')?.value }}
+          </p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body small text-muted">
+          <strong>Información:</strong>
+          <ul class="mb-0 mt-2 ps-3">
+            <li>Los cambios se guardan sólo en esta sesión (mock).</li>
+            <li>La contraseña nueva debe cumplir las reglas de seguridad.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: formulario -->
+    <div class="col-12 col-lg-8">
+      <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+        <div class="card shadow-sm mb-3">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Datos personales</h5>
+
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Nombre completo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nombre"
+                />
+                <div
+                  class="text-danger small"
+                  *ngIf="f['nombre'].touched && f['nombre'].invalid"
+                >
+                  El nombre es obligatorio y debe tener al menos 3 caracteres.
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Correo electrónico</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="correo"
+                />
+                <div
+                  class="text-danger small"
+                  *ngIf="f['correo'].touched && f['correo'].invalid"
+                >
+                  Debes ingresar un correo válido.
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Teléfono contacto</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="telefono"
+                  placeholder="987654321"
+                />
+                <div
+                  class="text-danger small"
+                  *ngIf="f['telefono'].touched && f['telefono'].invalid"
+                >
+                  Ingresa un teléfono de 9 dígitos (solo números).
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm mb-3">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Seguridad y contraseña</h5>
+
+            <div class="alert alert-light border small mb-3">
+              Para cambiar tu contraseña, completa los tres campos.
+            </div>
+
+            <div class="row g-3">
+              <div class="col-12 col-md-4">
+                <label class="form-label">Contraseña actual</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="passwordActual"
+                />
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">Nueva contraseña</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="nuevaPassword"
+                />
+                <div
+                  class="text-danger small"
+                  *ngIf="f['nuevaPassword'].touched && f['nuevaPassword'].errors?.['reglasPassword']"
+                >
+                  Debe tener mayúscula, número, símbolo y al menos 8 caracteres.
+                </div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <label class="form-label">Repetir contraseña</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="repetirPassword"
+                />
+              </div>
+            </div>
+
+            <!-- Errores a nivel de formulario -->
+            <div class="mt-3 small">
+              <div
+                class="text-danger"
+                *ngIf="perfilForm.errors?.['faltaPasswordActual']"
+              >
+                Para cambiar la contraseña debes ingresar la contraseña actual.
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="perfilForm.errors?.['mismatch']"
+              >
+                La nueva contraseña y la repetición no coinciden.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje de éxito -->
+        <div *ngIf="successMsg" class="alert alert-success small">
+          {{ successMsg }}
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button
+            type="submit"
+            class="btn btn-primary px-4"
+            [disabled]="perfilForm.invalid"
+          >
+            Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

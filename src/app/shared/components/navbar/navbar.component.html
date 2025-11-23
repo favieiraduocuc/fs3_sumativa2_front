@@ -1,0 +1,11 @@
+<li class="nav-item" *ngIf="usuario?.rol === 'PACIENTE'">
+  <a class="nav-link" routerLink="/resultados">Mis resultados</a>
+</li>
+
+<li class="nav-item" *ngIf="usuario?.rol === 'ADMIN'">
+  <a class="nav-link" routerLink="/laboratorios">Administrar laboratorios</a>
+</li>
+
+<li class="nav-item" *ngIf="usuario?.rol === 'USER'">
+  <a class="nav-link" routerLink="/laboratorios">Resultados Examenes</a>
+</li>

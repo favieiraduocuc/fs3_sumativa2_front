@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-sm" style="min-width: 360px; max-width: 420px; width: 100%;">
+    <div class="card-body">
+      <h4 class="card-title mb-3 text-center">Portal de Laboratorios</h4>
+      <div class="text-center mb-4">
+        <img src="assets/img/images/logo.png" alt="Logo Laboratorios Lumora" style="max-width: 120px; height: auto;">
+      </div>
+      <p class="text-muted text-center mb-4">Inicia sesión para continuar</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div class="mb-3">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-control" formControlName="email">
+          <div
+            class="text-danger small"
+            *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+            Se requiere un correo válido.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-control" formControlName="password">
+          <div
+            class="text-danger small"
+            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            Debes ingresar tu contraseña.
+          </div>
+        </div>
+
+        <div *ngIf="errorMsg" class="alert alert-danger small">
+          {{ errorMsg }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+          Ingresar
+        </button>
+
+        <div class="d-flex justify-content-between mt-3 small">
+          <a routerLink="/recuperar-clave" class="text-decoration-none">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
+      </form>
+
+      <div class="text-center mt-3">
+        <a routerLink="/" class="text-decoration-none">
+            Volver al inicio
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
