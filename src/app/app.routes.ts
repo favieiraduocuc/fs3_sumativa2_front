@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 
 // LAYOUTS
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { DashboardLayoutComponent } from './features/dashboard/layout/dashboard-layout.component';
 
 // HOME PÚBLICO
@@ -18,9 +17,13 @@ import { DashboardHomeComponent } from './features/dashboard/dashboard-home/dash
 
 // LABS
 import { LabListComponent } from './features/labs/lab-list/lab-list.component';
+import { LabCreateComponent } from './features/labs/pages/lab-create/lab-create.component';
 
-// RESULTS
-import { ResultListComponent } from './features/results/result-list/result-list.component';
+// RESULTADOS (JWT)
+import { ResultadoListComponent } from './features/resultados/pages/resultado-list/resultado-list.component';
+
+//  EXÁMENES
+import { MisExamenesComponent } from './features/examenes/pages/mis-examenes/mis-examenes.component';
 
 // PROFILE
 import { ProfileEditComponent } from './features/profile/profile-edit/profile-edit.component';
@@ -29,10 +32,8 @@ import { ProfileEditComponent } from './features/profile/profile-edit/profile-ed
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  // ⬇️ AHORA la raíz muestra la página pública de bienvenida
   { path: '', component: HomeComponent },
 
-  // Rutas públicas (sin sesión)
   {
     path: '',
     component: AuthLayoutComponent,
@@ -43,20 +44,34 @@ export const routes: Routes = [
     ]
   },
 
-   // Rutas privadas (dashboard) con layout propio
   {
     path: 'dashboard',
     component: DashboardLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', component: DashboardHomeComponent },                 // /dashboard
-      { path: 'laboratorios', component: LabListComponent },           // /dashboard/laboratorios
-      { path: 'resultados', component: ResultListComponent },          // /dashboard/resultados
-      { path: 'perfil', component: ProfileEditComponent },             // /dashboard/perfil
-      { path: 'usuarios/registrar', component: RegisterComponent }     // /dashboard/usuarios/registrar
+      { path: '', component: DashboardHomeComponent },
+
+      // LABS
+      { path: 'laboratorios', component: LabListComponent },
+      { path: 'laboratorios/nuevo', component: LabCreateComponent },
+
+      // RESULTADOS / EXÁMENES
+      { path: 'resultados', component: ResultadoListComponent }, // ✅ JWT OK
+      { path: 'mis-examenes', component: MisExamenesComponent }, // ✅ NUEVO
+
+      // PROFILE
+      { path: 'perfil', component: ProfileEditComponent },
+      { path: 'usuarios/registrar', component: RegisterComponent },
+
+      // ADMIN
+      {
+        path: 'admin/usuarios',
+        loadComponent: () =>
+          import('./features/admin/pages/admin-usuarios/admin-usuarios.component')
+            .then(m => m.AdminUsuariosComponent),
+      },
     ]
   },
 
-  // Rutas no encontradas
   { path: '**', redirectTo: 'login' }
 ];

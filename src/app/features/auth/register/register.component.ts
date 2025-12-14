@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { UsuarioApiService } from '../../../core/services/usuario-api.service'; // 👈 ajusta la ruta si es distinta
 
 @Component({
   selector: 'app-register',
@@ -19,10 +20,14 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  loading = false;
+  errorMsg = '';
+  successMsg = '';
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private usuarioApiService: UsuarioApiService   // 👈 nuevo
   ) {
     this.registerForm = this.fb.group(
       {
@@ -30,7 +35,14 @@ export class RegisterComponent {
         correo: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, this.passwordValidator]],
         repetirPassword: ['', Validators.required],
-        rol: ['', Validators.required]
+        rol: ['', Validators.required],
+        telefono: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^\+[0-9]{11,14}$/) // ej: +56912345678
+          ]
+        ]
       },
       { validators: this.matchPasswords }
     );
@@ -68,30 +80,39 @@ export class RegisterComponent {
       return;
     }
 
+    this.loading = true;
+    this.errorMsg = '';
+    this.successMsg = '';
+
     const formValue = this.registerForm.value;
 
+    // 👇 Payload EXACTO que espera tu backend (UsuarioCreateDTO)
     const nuevoUsuario = {
-      idUsuario: Date.now(),
       nombre: formValue.nombre,
       email: formValue.correo,
+      password: formValue.password,
       rol: formValue.rol,
-      activo: true,
-      telefono: '',
-      password: formValue.password
+      activo: 'S',
+      telefono: formValue.telefono
     };
 
-    // Guardar en la “BD” mock
-    const usuariosGuardados = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    usuariosGuardados.push(nuevoUsuario);
-    localStorage.setItem('usuarios', JSON.stringify(usuariosGuardados));
+    this.usuarioApiService.crearUsuario(nuevoUsuario).subscribe({
+      next: (resp) => {
+        this.loading = false;
+        this.successMsg = 'Usuario registrado correctamente';
+        alert('Usuario registrado correctamente');
 
-    alert('Usuario registrado correctamente');
+        // limpiar formulario
+        this.registerForm.reset();
 
-    // Opciones:
-    // 1) Limpiar el formulario y quedarse en la misma página
-    this.registerForm.reset();
-
-    // 2) (Opcional) Navegar de vuelta al dashboard:
-    // this.router.navigate(['/dashboard']);
+        // opcional: ir a la tabla de admin usuarios
+        // this.router.navigate(['/dashboard/admin/usuarios']);
+      },
+      error: (err) => {
+        console.error('Error al crear usuario', err);
+        this.loading = false;
+        this.errorMsg = err.error?.message || 'Error al registrar usuario';
+      }
+    });
   }
 }

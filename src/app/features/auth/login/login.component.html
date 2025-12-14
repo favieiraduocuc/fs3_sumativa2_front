@@ -2,9 +2,11 @@
   <div class="card shadow-sm" style="min-width: 360px; max-width: 420px; width: 100%;">
     <div class="card-body">
       <h4 class="card-title mb-3 text-center">Portal de Laboratorios</h4>
+
       <div class="text-center mb-4">
         <img src="assets/img/images/logo.png" alt="Logo Laboratorios Lumora" style="max-width: 120px; height: auto;">
       </div>
+
       <p class="text-muted text-center mb-4">Inicia sesión para continuar</p>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -12,9 +14,8 @@
         <div class="mb-3">
           <label class="form-label">Correo electrónico</label>
           <input type="email" class="form-control" formControlName="email">
-          <div
-            class="text-danger small"
-            *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          <div class="text-danger small"
+               *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
             Se requiere un correo válido.
           </div>
         </div>
@@ -22,19 +23,31 @@
         <div class="mb-3">
           <label class="form-label">Contraseña</label>
           <input type="password" class="form-control" formControlName="password">
-          <div
-            class="text-danger small"
-            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          <div class="text-danger small"
+               *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
             Debes ingresar tu contraseña.
           </div>
         </div>
 
+        <!-- ALERTA DE ERROR -->
         <div *ngIf="errorMsg" class="alert alert-danger small">
           {{ errorMsg }}
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">
-          Ingresar
+        <!-- LOADER -->
+        <div class="text-center my-3" *ngIf="loading">
+          <div class="spinner-border text-primary" role="status" style="width: 2.5rem; height: 2.5rem;">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+
+        <!-- BOTÓN LOGIN -->
+        <button
+          type="submit"
+          class="btn btn-primary w-100"
+          [disabled]="loading || loginForm.invalid">
+          <span *ngIf="!loading">Ingresar</span>
+          <span *ngIf="loading">Ingresando...</span>
         </button>
 
         <div class="d-flex justify-content-between mt-3 small">

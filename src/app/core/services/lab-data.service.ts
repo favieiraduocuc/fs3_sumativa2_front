@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Laboratorio } from '../models/laboratorio.model';
 import { ResultadoAnalisis } from '../models/resultado-analisis.model';
 import { Usuario } from '../models/usuario.model';
+import { UsuarioLocalService } from '../services/usuario-local.service'; // ajusta la ruta
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class LabDataService {
     },
     {
       idLab: 3,
-      nombre: 'Nuevo Lab',
+      nombre: 'Nuevo Lab 2',
       direccion: 'Calle 123',
       telefono: '+56 2 4444 5555',
       activo: true
@@ -59,37 +60,7 @@ export class LabDataService {
     }
   ];
 
-  private usuarios: Usuario[] = [
-    {
-      idUsuario: 2,
-      nombre: 'Juan Perez',
-      email: 'juan@empresa.com',
-      rol: 'PACIENTE',
-      activo: true,
-      // @ts-ignore si tu interfaz no tiene teléfono todavía
-      telefono: '987654321'
-    },
-    {
-      idUsuario: 12,
-      nombre: 'Pedro Silva',
-      email: 'pedro.admin@empresa.com',
-      rol: 'ADMIN',
-      activo: true,
-      // @ts-ignore
-      telefono: '987654320'
-    },
-    {
-      idUsuario: 13,
-      nombre: 'Luis Martínez',
-      email: 'luis.user@empresa.com',
-      rol: 'USER',
-      activo: true,
-      // @ts-ignore
-      telefono: '987654319'
-    }
-  ];
-
-  constructor() {}
+  constructor(private usuarioLocalService: UsuarioLocalService) {}
 
   getLaboratorios(): Laboratorio[] {
     return this.laboratorios;
@@ -100,8 +71,6 @@ export class LabDataService {
   }
 
   getUsuarios(): Usuario[] {
-    //  Aquí mezclamos los “mock” + los registrados en el formulario
-    const guardados = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    return [...this.usuarios, ...guardados];
+    return this.usuarioLocalService.getAll();
   }
 }

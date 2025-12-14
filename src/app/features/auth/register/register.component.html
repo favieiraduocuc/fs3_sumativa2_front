@@ -57,6 +57,16 @@
               </div>
             </div>
 
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="text" class="form-control" formControlName="telefono" placeholder="+56912345678">
+              <div class="text-danger small"
+                  *ngIf="registerForm.get('telefono')?.touched && registerForm.get('telefono')?.invalid">
+                Debe ingresar un número de teléfono válido.
+              </div>
+            </div>
+
+
             <button type="submit" class="btn btn-primary w-100">Crear cuenta</button>
 
           </form>

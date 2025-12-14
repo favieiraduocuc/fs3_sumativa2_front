@@ -9,6 +9,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { Usuario } from '../../../core/models/usuario.model';
+import { UsuarioApiService } from '../../../core/services/usuario-api.service';
 
 @Component({
   selector: 'app-profile-edit',
@@ -22,13 +23,18 @@ export class ProfileEditComponent implements OnInit {
   perfilForm: FormGroup;
   usuario: Usuario | null = null;
   successMsg: string | null = null;
+  errorMsg: string | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private usuarioApi: UsuarioApiService
+  ) {
     this.perfilForm = this.fb.group(
       {
         nombre: ['', [Validators.required, Validators.minLength(3)]],
         correo: ['', [Validators.required, Validators.email]],
-        telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+        // si quieres estrictamente 12 dígitos, cambia el patrón
+        telefono: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{9,12}$/)]],
         passwordActual: [''],
         nuevaPassword: ['', this.reglasPassword.bind(this)],
         repetirPassword: ['']
@@ -72,16 +78,12 @@ export class ProfileEditComponent implements OnInit {
     const nueva = group.get('nuevaPassword')?.value;
     const repetir = group.get('repetirPassword')?.value;
 
-    // Si no desea cambiar contraseña
     if (!nueva && !repetir) return null;
 
-    // Si nueva contraseña aún tiene errores de reglas, esperar
     if (group.get('nuevaPassword')?.errors?.['reglasPassword']) return null;
 
-    // Si quiere cambiarla, debe ingresar password actual
     if (!actual) return { faltaPasswordActual: true };
 
-    // Mismatch entre nueva y repetida
     if (nueva !== repetir) return { mismatch: true };
 
     return null;
@@ -89,36 +91,56 @@ export class ProfileEditComponent implements OnInit {
 
   onSubmit(): void {
     this.successMsg = null;
+    this.errorMsg = null;
 
     if (this.perfilForm.invalid) {
       this.perfilForm.markAllAsTouched();
       return;
     }
 
-    const formValue = this.perfilForm.value;
-
-    if (this.usuario) {
-      this.usuario = {
-        ...this.usuario,
-        nombre: formValue.nombre,
-        email: formValue.correo,
-        telefono: formValue.telefono
-      };
-
-      // Si cambió la contraseña, guardarla
-      if (formValue.nuevaPassword) {
-        (this.usuario as any).password = formValue.nuevaPassword;
-      }
-
-      localStorage.setItem('usuario', JSON.stringify(this.usuario));
+    if (!this.usuario || !this.usuario.idUsuario) {
+      this.errorMsg = 'No se encontró el usuario logueado en la sesión.';
+      return;
     }
 
-    // Limpiar campos de cambio de contraseña
-    this.perfilForm.get('passwordActual')?.reset();
-    this.perfilForm.get('nuevaPassword')?.reset();
-    this.perfilForm.get('repetirPassword')?.reset();
+    const formValue = this.perfilForm.value;
 
-    this.successMsg = 'Tu perfil se actualizó correctamente.';
+    // Payload para el backend
+    const payload: any = {
+      nombre: formValue.nombre,
+      email: formValue.correo,
+      telefono: formValue.telefono
+    };
+
+    if (formValue.nuevaPassword) {
+      payload.password = formValue.nuevaPassword;
+    }
+
+    this.usuarioApi.actualizarUsuario(this.usuario.idUsuario, payload)
+      .subscribe({
+        next: (actualizado) => {
+          // Actualizamos el usuario en memoria y en localStorage
+          this.usuario = {
+            ...this.usuario!,
+            nombre: actualizado.nombre,
+            email: actualizado.email,
+            telefono: (actualizado as any).telefono
+          };
+
+          localStorage.setItem('usuario', JSON.stringify(this.usuario));
+
+          // Limpiar campos de password
+          this.perfilForm.get('passwordActual')?.reset();
+          this.perfilForm.get('nuevaPassword')?.reset();
+          this.perfilForm.get('repetirPassword')?.reset();
+
+          this.successMsg = 'Tu perfil se actualizó correctamente en el servidor.';
+        },
+        error: (err) => {
+          console.error('Error al actualizar perfil', err);
+          this.errorMsg = 'Ocurrió un error al guardar los cambios en el servidor.';
+        }
+      });
   }
 
   get f() {

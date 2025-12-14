@@ -1,0 +1,131 @@
+<div class="container mt-4">
+  <h2>Panel de Administración de Usuarios</h2>
+  <p class="text-muted">
+    Vista exclusiva para rol <strong>ADMIN</strong> – usando datos de
+    <strong>BDD o Local storage según conexión</strong>
+  </p>
+
+  <table class="table table-striped table-hover mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Teléfono</th>
+        <th style="width: 120px;">Estado</th>
+        <th style="width: 120px;">Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td>{{ u.idUsuario }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.email }}</td>
+
+        <td>
+          <span class="badge bg-info">{{ u.rol }}</span>
+        </td>
+
+        <td>
+          <span class="badge" [ngClass]="u.activo ? 'bg-success' : 'bg-secondary'">
+            {{ u.activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+
+        <td>{{ u.telefono || '-' }}</td>
+
+        <td>
+          <!-- Botón desactivar / activar -->
+          <button
+            class="btn btn-sm"
+            *ngIf="u.activo"
+            (click)="desactivar(u)"
+            [ngClass]="'btn-outline-warning'">
+            Desactivar
+          </button>
+
+          <button
+            class="btn btn-sm btn-outline-success"
+            *ngIf="!u.activo"
+            (click)="activar(u)">
+            Activar
+          </button>
+        </td>
+
+        <td>
+          <!-- Botón eliminar: abre modal Angular -->
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="abrirSolicitudEliminacion(u)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Mensaje de error si cae el backend -->
+  <div *ngIf="error" class="alert alert-warning mt-3">
+    {{ error }}
+  </div>
+</div>
+
+<!-- 🔹 MODAL ANGULAR (sin JS de Bootstrap) -->
+<div
+  class="custom-modal-backdrop"
+  *ngIf="mostrarModal">
+
+  <div class="custom-modal-window">
+    <div class="custom-modal-header bg-danger text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Solicitud de Eliminación de Usuario</h5>
+      <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+    </div>
+
+    <div class="custom-modal-body">
+      <p>
+        Estás por solicitar la eliminación del usuario:
+        <strong>{{ usuarioSeleccionado?.nombre }}</strong>
+        ({{ usuarioSeleccionado?.email }})
+      </p>
+
+      <div class="mb-3">
+        <label class="form-label">Motivo</label>
+        <textarea
+          class="form-control"
+          [(ngModel)]="motivo"
+          rows="3"
+          placeholder="Escribe el motivo detallado de la solicitud..."></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Solicitado por</label>
+        <input
+          class="form-control"
+          [(ngModel)]="solicitante"
+          placeholder="Tu nombre o usuario interno" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Enviar a jefatura</label>
+        <select class="form-select" [(ngModel)]="jefatura">
+          <option value="gerencia-ti">Gerencia TI</option>
+          <option value="rrhh">Recursos Humanos</option>
+          <option value="seguridad">Seguridad Informática</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="custom-modal-footer d-flex justify-content-end gap-2">
+      <button class="btn btn-secondary" (click)="cerrarModal()">
+        Cancelar
+      </button>
+
+      <button class="btn btn-danger" (click)="enviarSolicitud()">
+        Enviar solicitud
+      </button>
+    </div>
+  </div>
+</div>

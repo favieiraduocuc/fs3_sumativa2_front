@@ -87,13 +87,13 @@
                   type="text"
                   class="form-control"
                   formControlName="telefono"
-                  placeholder="987654321"
+                  placeholder="+56987654321"
                 />
                 <div
                   class="text-danger small"
                   *ngIf="f['telefono'].touched && f['telefono'].invalid"
                 >
-                  Ingresa un teléfono de 9 dígitos (solo números).
+                  Ingresa un teléfono de 12 dígitos.
                 </div>
               </div>
             </div>

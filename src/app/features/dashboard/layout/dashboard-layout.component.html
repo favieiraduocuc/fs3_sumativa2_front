@@ -70,6 +70,23 @@
             Registrar usuarios
           </a>
         </li>
+
+        <!-- 🆕 NUEVA PESTAÑA: ADMIN USUARIOS -->
+        <li class="nav-item" *ngIf="usuario?.rol === 'ADMIN'">
+          <a class="nav-link"
+             routerLink="/dashboard/admin/usuarios"
+             routerLinkActive="active">
+            Admin Usuarios
+          </a>
+        </li>
+                <!-- 🆕 NUEVA PESTAÑA: Mis Examenes USUARIOS -->
+        <li class="nav-item" *ngIf="usuario?.rol === 'ADMIN'">
+          <a class="nav-link"
+             routerLink="/dashboard/mis-examenes"
+             routerLinkActive="active">
+            Mis Examenes
+          </a>
+        </li>
       </ul>
 
       <div class="d-flex align-items-center">

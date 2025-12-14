@@ -1,0 +1,69 @@
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Mis Exámenes</h3>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="alert alert-info d-flex align-items-center gap-2" role="alert">
+    <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+    <div>Cargando exámenes...</div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && errorMsg" class="alert alert-warning mt-3">
+    {{ errorMsg }}
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-responsive" *ngIf="!loading && !errorMsg">
+    <table class="table table-striped table-hover align-middle mt-3" *ngIf="examenes.length">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Paciente</th>
+          <th>Laboratorio</th>
+          <th>Tipo</th>
+          <th>Fecha Analisis</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let e of examenes">
+          <td>{{ e.idResultado }}</td>
+          <td>{{ e.paciente }}</td>
+          <td>{{ e.laboratorio }}</td>
+          <td>{{ e.tipo }}</td>
+          <td>{{ e.fechaResultado }}</td>
+
+          <td>
+            <span
+              class="badge"
+              [ngClass]="
+                e.estado === 'PENDIENTE' ? 'bg-secondary' :
+                e.estado === 'PROCESADO' ? 'bg-warning text-dark' :
+                'bg-success'
+              "
+            >
+              {{ e.estado }}
+            </span>
+          </td>
+        </tr>
+
+        <!-- Empty state -->
+        <tr *ngIf="examenes.length === 0">
+          <td colspan="6" class="text-center text-muted">
+            No hay exámenes para este usuario.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Por si no hay registros (cuando no se renderiza la tabla) -->
+    <div *ngIf="!examenes.length" class="text-center text-muted mt-3">
+      No hay exámenes para este usuario.
+    </div>
+  </div>
+
+</div>
