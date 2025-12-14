@@ -1,17 +1,41 @@
 import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
-
+import { Router } from '@angular/router';
 import { authGuard } from './auth.guard';
 
 describe('authGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => authGuard(...guardParameters));
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Router, useValue: routerSpy }
+      ]
+    });
+
+    // limpiamos storage antes de cada test
+    localStorage.clear();
   });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
+  it('should allow activation when user exists in localStorage', () => {
+    // simulamos usuario logeado
+    localStorage.setItem('usuario', JSON.stringify({ id: 1 }));
+
+    const result = TestBed.runInInjectionContext(() =>
+      authGuard({} as any, {} as any)
+    );
+
+    expect(result).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should block activation and redirect to /login when no user', () => {
+    const result = TestBed.runInInjectionContext(() =>
+      authGuard({} as any, {} as any)
+    );
+
+    expect(result).toBeFalse();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 });
